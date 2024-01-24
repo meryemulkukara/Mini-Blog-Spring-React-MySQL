@@ -1,0 +1,8 @@
+.container{
+    display: flex;
+    flex-wrap: wrap; //objeler bi satıra mı sıpsın yoksa sayfa doldğuunda aşağıki satıra mı atlasın kontrolünü sağlıyo wrap sayfa doldğuunda atla demek
+    justify-content: space-around; //container içindeki componenetler kenarlara da boşluk bırakarak ve kendi aralarında da boşluk bırakarak diziliyorlar
+    // yani böylece soldan şu kadar boşluk bırak sağdan şu kadar boşku bırak vs gibi düzenleemelr yapmamamıza gerek kalmıyor
+    
+
+}
