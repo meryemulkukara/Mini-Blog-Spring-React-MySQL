@@ -2,6 +2,7 @@ package com.QuestAPP.demo.controllers;
 
 
 import com.QuestAPP.demo.entities.Like;
+import com.QuestAPP.demo.requests.LikeCreateRequest;
 import com.QuestAPP.demo.responses.LikeResponse;
 import com.QuestAPP.demo.services.LikeService;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +26,18 @@ public class LikeController {
     }
 
 
+    @PostMapping
+    public  Like createOneLike(@RequestBody LikeCreateRequest newlike){
+        return likeService.createOneLike(newlike);
+    }
 
-    @GetMapping("/likeid")
+
+    @GetMapping("/{likeid}")
     public Like getOneLikeById(@PathVariable Long likeid){
         return likeService.getOneLikeById(likeid);
     }
 
-    @DeleteMapping("/likeid")
+    @DeleteMapping("/{likeid}")
     public void deleteOneLike(@PathVariable Long likeid){
         likeService.deleteOneLike(likeid);
     }

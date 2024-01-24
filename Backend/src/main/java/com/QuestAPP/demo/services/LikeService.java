@@ -1,7 +1,10 @@
 package com.QuestAPP.demo.services;
 
 import com.QuestAPP.demo.entities.Like;
+import com.QuestAPP.demo.entities.Post;
+import com.QuestAPP.demo.entities.User;
 import com.QuestAPP.demo.repositories.LikeRepository;
+import com.QuestAPP.demo.requests.LikeCreateRequest;
 import com.QuestAPP.demo.responses.LikeResponse;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +34,7 @@ public class LikeService {
         else if( postid.isPresent()){   likes= likeRepository.findByPostId(postid.get());}
         else {    likes= likeRepository.findAll();        }
 
-        return likes.stream().map(l -> new LikeResponse(l)).collect(Collectors.toList());
+        return likes.stream().map(LikeResponse::new).collect(Collectors.toList());
     }
 
 
@@ -41,8 +44,24 @@ public class LikeService {
     }
 
 
-    public void deleteOneLike(Long likeid) {
-        likeRepository.deleteById(likeid);
+    public void deleteOneLike(Long likeid) {        likeRepository.deleteById(likeid);    }
+
+    public Like createOneLike(LikeCreateRequest newlike) {
+
+        if(userService.getOneUserById(newlike.getUserid())==null || postService.getOnePostById(newlike.getPostid())==null
+        //|| likeRepository.findByUserIdAndPostId(newlike.getPostid(), newlike.getUserid()) != null
+        ){
+            return null;
+        }
+        else
+        {   Like like= new Like();
+            Post post=postService.getOnePostById(newlike.getPostid());
+            like.setId(newlike.getId());
+            like.setPost(post);
+            like.setUser(userService.getOneUserById(newlike.getUserid()));
+            return likeRepository.save(like);}
     }
+
+
 }
 

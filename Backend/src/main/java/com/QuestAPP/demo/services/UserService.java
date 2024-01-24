@@ -1,20 +1,33 @@
 package com.QuestAPP.demo.services;
 
+import com.QuestAPP.demo.entities.Role;
 import com.QuestAPP.demo.entities.User;
 import com.QuestAPP.demo.repositories.UserRepository;
+import com.QuestAPP.demo.requests.AuthenticateUserRequest;
+import com.QuestAPP.demo.requests.RegisterUserRequest;
+import com.QuestAPP.demo.responses.AuthenticationResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository){
-        this.userRepository= userRepository;
-    }
+    private final AuthenticationManager authenticationManager;
+
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -51,9 +64,42 @@ public class UserService {
         }
     }
 
+  //  public User getOneUserByUsername(String username){
+  //      return userRepository.findByUsername(username);
+  //  }
+
     public void deleteOneUser(Long userid) {
         userRepository.deleteById(userid);
     }
+
+    public AuthenticationResponse registerUser(RegisterUserRequest request) {
+        var user= User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .build();
+        userRepository.save(user);
+        var jwtToken=jwtService.generateToken(user);
+        return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public AuthenticationResponse authenticateUser(AuthenticateUserRequest authenticate) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authenticate.getUsername(), authenticate.getPassword()
+                )
+        );
+        var user= userRepository.findUserByUsername(authenticate.getUsername()).orElseThrow();
+        String jwtToken= jwtService.generateToken(user);
+        return AuthenticationResponse.builder().token(jwtToken).build();
+
+    }
+
+
+    //  public void saveOneUser( User user){
+  //      userRepository.save(user);
+  //  }
 }
 
 

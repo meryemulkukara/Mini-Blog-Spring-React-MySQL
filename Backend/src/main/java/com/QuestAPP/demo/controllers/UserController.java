@@ -1,26 +1,27 @@
 package com.QuestAPP.demo.controllers;
 
 import com.QuestAPP.demo.entities.User;
-import com.QuestAPP.demo.repositories.UserRepository;
+import com.QuestAPP.demo.requests.AuthenticateUserRequest;
+import com.QuestAPP.demo.requests.RegisterUserRequest;
+import com.QuestAPP.demo.responses.AuthenticationResponse;
 import com.QuestAPP.demo.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users") //usersla alakalı bütün pathler /users ile başladığı için mapi bu
 public class UserController {
 
-    private UserService userService; //spring kendisi bu
+    private  final UserService userService; //spring kendisi bu
     // userrepoyu bulup bury atayacak ben o yüzden eşitlemedim
     // bunun için constructor injection, setter injection vs tarzı şeyler kullanılabilyor
     // burada onstructor injection kullanacağız
 
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     //Sadce userRepositoryi kullanıp bütün userları findall methodu ile çekiyor
     //GetMApping var olanı çekiyor
@@ -31,9 +32,14 @@ public class UserController {
 
 
     //PostMapping yeni bir şeyler eklmemek için burada eklenecek şey user
-    @PostMapping // /users a yeni user ekleme amaç
-    public User createUser(@RequestBody User newUser){
-        return userService.addOneUser(newUser);
+    @PostMapping("/register") // /users a yeni user ekleme amaç
+    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody RegisterUserRequest request){
+        return ResponseEntity.ok(userService.registerUser(request));
+    }
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticateUser(@RequestBody AuthenticateUserRequest authenticate){
+        return ResponseEntity.ok(userService.authenticateUser(authenticate));
     }
 
 
@@ -41,8 +47,8 @@ public class UserController {
     //belirttik. Burada getmappingle belirttiğimiz de pathde belirlenmiş olan userid yi çekmek
     //Parametre kısmındaki @pathvarialbe yukarıda getmappingde verilmiş userid yi ekmeye yarıyor ve bunu Long userid şeklinde
     //belirttiğimiz userid içerisine atıyor
-    public User getOneUserById( @PathVariable Long user_id){
-        return userService.getOneUserById(user_id);
+    public User getOneUserById( @PathVariable Long userid){
+        return userService.getOneUserById(userid);
     }
 
 
