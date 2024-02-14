@@ -54,7 +54,7 @@ public class UserService {
         Optional<User> user= userRepository.findById(user_id);//optional demek obje var olabilir ama var olmayadabilri
         if(user.isPresent()){//burada obje var mı kontrolünü ispresent ile yapıypruz
             User foundedUser= user.get();// optional onjeyi get ile çekip foundeduser ın içine atıyruz
-            foundedUser.setUsername(updatedUser.getUsername());
+            foundedUser.setEmail(updatedUser.getUsername());
             foundedUser.setPassword(updatedUser.getPassword());
             userRepository.save(foundedUser);
             return foundedUser;
@@ -74,7 +74,8 @@ public class UserService {
 
     public AuthenticationResponse registerUser(RegisterUserRequest request) {
         var user= User.builder()
-                .username(request.getUsername())
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
@@ -87,10 +88,10 @@ public class UserService {
     public AuthenticationResponse authenticateUser(AuthenticateUserRequest authenticate) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authenticate.getUsername(), authenticate.getPassword()
+                        authenticate.getEmail(), authenticate.getPassword()
                 )
         );
-        var user= userRepository.findUserByUsername(authenticate.getUsername()).orElseThrow();
+        var user= userRepository.findUserByEmail(authenticate.getEmail()).orElseThrow();
         String jwtToken= jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
 

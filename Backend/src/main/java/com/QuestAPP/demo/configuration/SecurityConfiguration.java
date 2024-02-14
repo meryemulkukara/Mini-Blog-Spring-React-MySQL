@@ -28,8 +28,12 @@ public class SecurityConfiguration {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers(HttpMethod.POST, "users/**")
-                        .permitAll().anyRequest().authenticated())
+                        authorize
+                                .requestMatchers(HttpMethod.POST, "users/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "posts/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "comments/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "likes/**").permitAll()
+                                .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider); //Application configuration
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

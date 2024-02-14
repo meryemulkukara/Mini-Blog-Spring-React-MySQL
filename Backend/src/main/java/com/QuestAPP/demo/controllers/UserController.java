@@ -32,12 +32,12 @@ public class UserController {
 
 
     //PostMapping yeni bir şeyler eklmemek için burada eklenecek şey user
-    @PostMapping("/register") // /users a yeni user ekleme amaç
+    @PostMapping("/auth/register") // /users a yeni user ekleme amaç
     public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody RegisterUserRequest request){
         return ResponseEntity.ok(userService.registerUser(request));
     }
 
-    @PostMapping("/authenticate")
+    @PostMapping("/auth/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticateUser(@RequestBody AuthenticateUserRequest authenticate){
         return ResponseEntity.ok(userService.authenticateUser(authenticate));
     }

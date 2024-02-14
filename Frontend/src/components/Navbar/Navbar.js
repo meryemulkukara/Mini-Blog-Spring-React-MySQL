@@ -50,6 +50,15 @@ function Navbar(){
              <Link to='/'  style={linkStyle}>Home</Link>
              </Typography>
              <Typography variant="h6" component="div" >
+             <Link to="/signin"  style={linkStyle}>Sing In</Link>
+             </Typography>
+             <Typography variant="h6" component="div" >
+             /
+             </Typography>
+             <Typography variant="h6" component="div" >
+             <Link to= "/signup"  style={linkStyle}>Sign Up</Link>
+             </Typography>
+             <Typography variant="h6" component="div" >
              <Link to={{pathname: '/users/' + userid}}  style={linkStyle}>User</Link>
              </Typography>
            </Toolbar>
